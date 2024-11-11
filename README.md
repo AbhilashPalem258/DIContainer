@@ -13,7 +13,7 @@ DIContainer is composed of below components and communicate with each other for 
 8. Logger
 
 # Architecture:
-![alt text](https://github.com/AbhilashPalem258/NetworkService/blob/main/NetworkService.png)
+![alt text](https://github.com/AbhilashPalem258/DIContainer/blob/main/DIContainer.png)
 
 # Components:
 #### DIContainer
@@ -41,44 +41,43 @@ Service Factory is just a wrapper around the builder or closure provided by the 
 Logger is just used to log all the activities like registering a service and resolving a component in console.
 
 # Usage:
-1. Import NetworkService after adding as SPM package
-2. Create an instance of NetworkService
-3. Call NetworkService API/functions to fetch data or resources.
+1. Import DIContainer after adding as SPM package
+2. Create an instance of DIContainer
+3. Call DIContainer API/functions to register services and resolve  components.
 
 ``` swift
-import NetworkService
+import DIContainer
 
-let NS = NetworkService(
-    configuration: NetworkServiceConfiguration(
-        requestTimeout: 90,
-        baseURL: URL(string: "https://picsum.photos/")!,
-        logEnabled: true,
-        defaultHeaders: [:]
-    )
-)
-
-struct StoryBundleListRequest: APIRoutable {
-    var parameters: AnyEncodable? = nil
-    
-    var httpMethod: HTTPMethod {
-        .get
-    }
-        
-    var path: String {
-        "v2/list?page=2&limit=20"
-    }
-    
-    var headers: [String : String] = [:]
+protocol DependencyAProtocol {
+    func increment()
 }
 
-Completion handlers:
-NS.fetchData(StoryBundleListRequest(), responseType: [StoryBundleMetadata].self) { model, failure in
-    <#code#>
+protocol DependencyBProtocol {
+    func increment()
 }
 
-Combine:
-NS.fetchData(StoryBundleListRequest(), responseType: [StoryBundleMetadata].self)
+class DependencyA: DependencyAProtocol {
+    var value = 1
+    
+    func increment() {
+        value += 1
+    }
+}
 
-Concurrency:
-try await NS.fetchData(StoryBundleListRequest(), responseType: [StoryBundleMetadata].self)
+class DependencyB: DependencyBProtocol {
+    var value = 101
+    
+    func increment() {
+        value += 1
+    }
+}
+
+let container = DIContainer()
+container.register(type: DependencyAProtocol.self, label: "DependencyA-01") {
+    return DependencyA()
+}
+
+var component1 = try? container.resolve(type:  DependencyAProtocol.self, scope: .shared, label: "DependencyA-01")
+
+var component1 = try? container.resolve(type:  DependencyAProtocol.self, scope: .transient, label: "DependencyA-01")
 ```

@@ -6,7 +6,7 @@
 //
 
 extension DIContainer {
-    enum Errors: Error {
+    public enum Errors: Error {
         case serviceUnregistered
     }
 }

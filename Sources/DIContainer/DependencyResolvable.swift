@@ -7,21 +7,21 @@
 
 import OSLog
 
-protocol DependencyResolvable {
+public protocol DependencyResolvable {
     func resolve<T>(type: T.Type) throws -> T
     func resolve<T>(type: T.Type, label: String) throws -> T
     func resolve<T>(type: T.Type, scope: Scope, label: String) throws -> T
 }
 extension DIContainer: DependencyResolvable {
-    func resolve<T>(type: T.Type) throws -> T {
+    public func resolve<T>(type: T.Type) throws -> T {
         return try resolve(type: type, scope: .transient, label: "")
     }
     
-    func resolve<T>(type: T.Type, label: String) throws -> T {
+    public func resolve<T>(type: T.Type, label: String) throws -> T {
         return try resolve(type: type, scope: .transient, label: label)
     }
     
-    func resolve<T>(type: T.Type, scope: Scope, label: String) throws -> T {
+    public func resolve<T>(type: T.Type, scope: Scope, label: String) throws -> T {
         let key = ServiceKey(type: type, label: label)
         return try resolve(key: key, scope: scope)
     }
